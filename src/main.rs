@@ -25,8 +25,9 @@ async fn process_qa(correct_counter: web::Data<IntCounterVec>, payload: web::Jso
     match result {
         Ok(answers) => {
             let response_text = if let Some(first_answer) = answers.first() {
-                // Assuming 'text' is the correct field to use; replace with the correct field name
-                format!("Answer: {}\n", first_answer.text)  // Confirm 'text' is the right field
+                // Adjust this line to correctly print the fields of `first_answer`, ensure the fields exist
+                // For example, using `format!("Answer: {:?}", first_answer)` if you want to print all fields
+                format!("Answer: {:?}", first_answer)  
             } else {
                 String::from("No valid answer found.")
             };
