@@ -1,93 +1,274 @@
-# Final Project Group 11
+# Final Project Group 11: Question-Answering Service with  DistilBERT model
+
+## Team Member
+- Hathaway Liu
+- Zaolin Zhang
+- Xingzhi Xie
+- Huanli Gong
+
+## Purpose
+
+The purpose of this project is to develop a robust, scalable web service that utilizes machine learning to provide answers to questions based on a provided context. This service leverages an open-source machine learning model for extractive question answering, specifically using the DistilBERT model pre-trained on the SQuAD dataset.
+
+## Demo Video
+![Demo Video](https:XXXX)
+
+## Introduction
+
+The Question-Answering API allows users to submit a question along with a context paragraph and receive a specific answer extracted from the context. This service is built on the Rust programming language, providing high performance and safety. The model serving is handled by `rust_bert`, which is a Rust library port of the Hugging Face's `transformers` library.
 
 
+## Model Details
 
-## Getting started
+Our service utilizes a pre-trained DistilBERT model that has been fine-tuned on the SQuAD (Stanford Question Answering Dataset). DistilBERT is a smaller, faster, cheaper, and lighter version of BERT that retains 97% of its predecessor's language understanding capabilities but with fewer parameters, making it ideal for our web-based service.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+####API Usage
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Clients can interact with the API by sending a POST request to `/qa` endpoint. The request should include a JSON payload containing `question` and `context` keys. The service processes this request, performs inference using the loaded model, and returns the extracted answer as a JSON response.
 
-## Add your files
+##### Example Request 1:
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```bash
+curl -X POST http://localhost:8080/qa \
+-H "Content-Type: application/json" \
+-d '{"question": "What is your hometown?", "context": "My hometown is a beautiful city. Its name is Guangzhou, which is a beautiful place with lots of flowers"}'
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/final-group-11/final-project-group-11.git
-git branch -M main
-git push -uf origin main
+
+##### Example Answer 1:
+```bash
+{"answer":"Guangzhou","end":54,"score":0.9698584079742432,"start":45}
 ```
 
-## Integrate with your tools
+![Function overview](screenshot/screenshot1.png)
 
-- [ ] [Set up project integrations](https://gitlab.com/final-group-11/final-project-group-11/-/settings/integrations)
+##### Example Request 2 with Empty Input:
 
-## Collaborate with your team
+```bash
+curl -X POST http://localhost:8080/qa \
+-H "Content-Type: application/json" \
+-d '{"question": "", "context": "My hometown is a beautiful city. Its name is Guangzhou, which is a beautiful place with lots of flowers"}'
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+##### Example Answer 2 with Empty Input:
+```bash
+{"error": "`question` cannot be empty"}
+```
 
-## Test and Deploy
+![Function overview](screenshot/screenshot2.png)
 
-Use the built-in continuous integration in GitLab.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Detailed Stpes
+## Step 1: Install Dependencies
 
-***
+Install the required Python packages:
 
-# Editing this README
+```bash
+pip install flask flask-restful transformers prometheus_client torch torchvision torchaudio
+```
+## Step 2: Create and update `main.py`
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+The service utilizes a pre-trained machine learning model via the `transformers` library to answer questions provided through a REST API. Key features include robust logging, error handling, and real-time metrics collection using Prometheus.
 
-## Suggestions for a good README
+### Dependencies
+- Flask: Provides the web framework.
+- Flask-RESTful: Simplifies the creation of REST APIs with resource-based classes.
+- transformers: Utilized for loading and executing the pre-trained question-answering model.
+- prometheus_client: Enables metrics collection for monitoring service performance.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Setting Up the Flask Application
+```python
+from flask import Flask, request, jsonify
+from flask_restful import Api
 
-## Name
-Choose a self-explaining name for your project.
+app = Flask(__name__)
+api = Api(app)
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Configuring Logging
+```python
+import logging
+logging.basicConfig(level=logging.INFO)
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Loading the Model
+The service uses the `transformers` library to load a pre-trained question-answering model.
+```python
+from transformers import pipeline
+qa_pipeline = pipeline("question-answering")
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Metrics with Prometheus
+Prometheus metrics are configured to monitor the number of correct HTTP requests and response times:
+```python
+from prometheus_client import start_http_server, Counter, Histogram
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+correct_requests_counter = Counter(
+    'correct_http_requests', 
+    'Total HTTP requests that were processed correctly.', 
+    ['endpoint']
+)
+response_times = Histogram(
+    'http_response_times_seconds', 
+    'Histogram of response times in seconds', 
+    ['endpoint']
+)
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### QuestionAnswer Resource Class
+This class handles POST requests by performing model inference to answer questions.
+```python
+from flask_restful import Resource
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+class QuestionAnswer(Resource):
+    def post(self):
+        with response_times.labels(endpoint='/qa').time():
+            data = request.get_json()
+            question = data['question']
+            context = data['context']
+            result = qa_pipeline(question=question, context=context)
+            answer = result['answer']
+            correct_requests_counter.labels(endpoint='/qa').inc()
+            return jsonify(answer=answer)
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Error Handling
+Logging and error responses are managed to ensure service reliability.
+```python
+except Exception as e:
+    logging.error(f"Error processing request: {e}")
+    return {"error": str(e)}, 500
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Initializing the API and Metrics Server
+The endpoints are setup and the Prometheus server starts on port 8000.
+```python
+api.add_resource(QuestionAnswer, '/qa')
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+if __name__ == '__main__':
+    start_http_server(8000)
+    app.run(host='0.0.0.0', port=8080)
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Step 3: Run Locally 
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+To run the application locally:
 
-## License
-For open source projects, say how it is licensed.
+```bash
+python main.py
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This will start the Flask server on `localhost:8080` and Prometheus metrics server on `localhost:8000`.
+
+## Step 4: Create the Dockerfile
+
+```dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the current directory contents into the container at /usr/src/app
+COPY . .
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+# Note: You should ideally specify exact versions of these packages to ensure reproducibility.
+RUN pip install --no-cache-dir flask flask-restful transformers prometheus_client torch torchvision torchaudio
+
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
+
+# Define environment variable
+ENV NAME World
+
+# Start the Prometheus metrics server
+CMD ["start_http_server", "8000"]
+
+# Run main.py when the container launches
+CMD ["python", "./src/main.py"]
+```
+## Step 5: Build Docker Image
+
+Navigate to the directory containing your Dockerfile and build your Docker image:
+
+```bash
+docker build -t user_name/qa-api:latest .
+```
+
+## Step 6: Push the Image to Docker Hub
+
+Run the following code in the terminal and replace user_name with your real Docker user name
+```bash
+docker tag user_name/qa-api:latest user_name/qa-api:latest
+docker push user_name/qa-api:latest
+```
+
+## Step 7: Deploy to Google Kubernetes Engine
+
+### 1. Install Google Cloud SDK
+To interact with Google Cloud resources, you need to install the Google Cloud SDK. Use Homebrew to install it if using MacOS:
+```bash
+brew install --cask google-cloud-sdk
+```
+
+### 2. Initialize Google Cloud SDK
+After installation, initialize the Google Cloud SDK to configure your authentication credentials and set the default project:
+```bash
+gcloud init
+```
+
+### 3. Install Kubernetes Command-Line Tool (kubectl)
+`kubectl` is a command-line tool that allows you to run commands against Kubernetes clusters. Install it using:
+```bash
+gcloud components install kubectl
+```
+
+### 4. Authenticate with Google Cloud
+Ensure that your authentication credentials are set up correctly for Google Cloud:
+```bash
+gcloud auth login
+```
+
+### 5. Create a Kubernetes Cluster
+Create a cluster on Google Kubernetes Engine. Replace `<cluster-name>` and `<zone>` with your specific details:
+```bash
+gcloud container clusters create <cluster-name> --zone <zone>
+```
+
+### 6. Configure kubectl to Use Your Cluster
+Configure `kubectl` to use the cluster you just created:
+```bash
+gcloud container clusters get-credentials <cluster-name> --zone  <zone> --project <project-id>
+```
+
+### 7. Write the Kubernetes Configuration YAML File
+Create a YAML file (`kubernetes.yaml`) that describes your deployment and service. This file includes specifications for replicas, container images, ports, etc.
+
+### 8. Deploy Your Application
+Apply the YAML configuration to your cluster, deploying your application, replace <yaml-file> with your real yaml file
+```bash
+kubectl apply -f <yaml-file>
+```
+
+### 9. Verify Deployment
+Check the status of your deployment:
+```bash
+kubectl get deployments
+```
+
+### 10. Verify Service
+Check the created services to ensure your application is accessible:
+```bash
+kubectl get svc
+```
+
+## Step 8: Set Up CI/CD Pipeline
+
+- Configure your CI/CD pipeline using your preferred CI/CD platform (e.g., GitLab CI).
+- Ensure your pipeline handles the lifecycle of building, testing, and deploying your application.
