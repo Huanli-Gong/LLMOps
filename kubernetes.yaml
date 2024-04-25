@@ -1,0 +1,32 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "qa-api2-deployment"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "qa-api"
+  template:
+    metadata:
+      labels:
+        app: "qa-api"
+    spec:
+      containers:
+      - name: "qa-api"
+        image: "hathawayliu/qa-api:latest"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "metrics-server"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: qa-api
