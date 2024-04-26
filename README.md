@@ -39,7 +39,7 @@ curl -X POST http://localhost:8080/qa \
 {"answer":"Guangzhou","end":54,"score":0.9698584079742432,"start":45}
 ```
 
-![Function overview](screenshot/screenshot1.png)
+![Function overview](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/935e235f40e18d43a043ce81ffa6964f/Screenshot_2024-04-25_at_2.21.47_PM.png)
 
 ##### Example Request 2 with Empty Input:
 
@@ -270,6 +270,8 @@ Check the status of your deployment:
 ```bash
 kubectl get deployments
 ```
+Or you could go to Google Cloud to view the status of your deployment:
+![deployment]()
 
 ### 10. Verify Service
 Check the created services to ensure your application is accessible:
