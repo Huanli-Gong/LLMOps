@@ -7,7 +7,7 @@ app = Flask(__name__)
 api = Api(app)
 
 # Load the question answering model using transformers
-qa_pipeline = pipeline("question-answering")
+qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
 
 # Define a counter metric for Prometheus
 correct_requests_counter = Counter('correct_http_requests', 'Total HTTP requests that were processed correctly.', ['endpoint'])
