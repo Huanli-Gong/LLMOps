@@ -84,12 +84,6 @@ app = Flask(__name__)
 api = Api(app)
 ```
 
-### Configuring Logging
-```python
-import logging
-logging.basicConfig(level=logging.INFO)
-```
-
 ### Loading the Model
 The service uses the `transformers` library to load a pre-trained question-answering model.
 ```python
@@ -98,54 +92,40 @@ qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-dist
 ```
 
 ### Metrics with Prometheus
-Prometheus metrics are configured to monitor the number of correct HTTP requests and response times:
+Prometheus metrics are configured to monitor the number of correct HTTP requests:
 ```python
-from prometheus_client import start_http_server, Counter, Histogram
+from prometheus_client import start_http_server, Counter
 
 correct_requests_counter = Counter(
     'correct_http_requests', 
     'Total HTTP requests that were processed correctly.', 
     ['endpoint']
 )
-response_times = Histogram(
-    'http_response_times_seconds', 
-    'Histogram of response times in seconds', 
-    ['endpoint']
-)
 ```
 
 ### QuestionAnswer Resource Class
-This class handles POST requests by performing model inference to answer questions.
+This class handles POST requests by performing model inference to answer questions, providing additional details about the answer.
 ```python
 from flask_restful import Resource
 
 class QuestionAnswer(Resource):
     def post(self):
-        try:
-            # Parse the input data
+        try {
             data = request.get_json()
             question = data['question']
             context = data['context']
-            
-            # Use the model to get an answer
             result = qa_pipeline(question=question, context=context)
             answer = result['answer']
             score = result['score']
             start = result['start']
             end = result['end']
             
-            # Increment the Prometheus counter
             correct_requests_counter.labels(endpoint='/qa').inc()
             
-            # Return the answer along with additional details
             return jsonify(answer=answer, score=score, start=start, end=end)
-```
-
-### Error Handling
-Logging and error responses are managed to ensure service reliability.
-```python
-except Exception as e:
-    return {"error": str(e)}, 500
+        } except Exception as e {
+            return str(e), 500
+        }
 ```
 
 ### Initializing the API and Metrics Server
