@@ -1,0 +1,28 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t hathawayliu/qa-api:latest .
+    - docker tag hathawayliu/qa-api:latest hathawayliu/qa-api:latest
+    - docker push hathawayliu/qa-api:latest
+
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  script:
+    - echo $GKE_SERVICE_KEY > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud container clusters get-credentials qa-api --zone us-west1 --project ids721
+    - kubectl apply -f kubernetes.yaml
+    - kubectl rollout restart deployment qa-api-deployment
+    - kubectl get deployments
+    - kubectl get pods -l app=qa-api
+    - kubectl get svc
+  only:
+    - main
