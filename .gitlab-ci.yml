@@ -20,7 +20,6 @@ deploy:
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
     - gcloud container clusters get-credentials qa-api --zone us-west1 --project ids721
     - kubectl apply -f kubernetes.yaml
-    - kubectl rollout restart deployment qa-api-deployment
     - kubectl get deployments
     - kubectl get pods -l app=qa-api
     - kubectl get svc
