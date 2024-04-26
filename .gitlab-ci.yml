@@ -8,8 +8,8 @@ build:
   services:
     - docker:dind
   script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
     - docker build -t hathawayliu/qa-api:latest .
-    - docker tag hathawayliu/qa-api:latest hathawayliu/qa-api:latest
     - docker push hathawayliu/qa-api:latest
 
 deploy:
