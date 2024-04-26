@@ -22,7 +22,7 @@ The Question-Answering API allows users to submit a question along with a contex
 
 Our service utilizes a pre-trained DistilBERT model that has been fine-tuned on the SQuAD (Stanford Question Answering Dataset). DistilBERT is a smaller, faster, cheaper, and lighter version of BERT that retains 97% of its predecessor's language understanding capabilities but with fewer parameters, making it ideal for our web-based service.
 
-####API Usage
+#### API Usage
 
 Clients can interact with the API by sending a POST request to `/qa` endpoint. The request should include a JSON payload containing `question` and `context` keys. The service processes this request, performs inference using the loaded model, and returns the extracted answer as a JSON response.
 
@@ -94,7 +94,7 @@ logging.basicConfig(level=logging.INFO)
 The service uses the `transformers` library to load a pre-trained question-answering model.
 ```python
 from transformers import pipeline
-qa_pipeline = pipeline("question-answering")
+qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
 ```
 
 ### Metrics with Prometheus
@@ -121,21 +121,30 @@ from flask_restful import Resource
 
 class QuestionAnswer(Resource):
     def post(self):
-        with response_times.labels(endpoint='/qa').time():
+        try:
+            # Parse the input data
             data = request.get_json()
             question = data['question']
             context = data['context']
+            
+            # Use the model to get an answer
             result = qa_pipeline(question=question, context=context)
             answer = result['answer']
+            score = result['score']
+            start = result['start']
+            end = result['end']
+            
+            # Increment the Prometheus counter
             correct_requests_counter.labels(endpoint='/qa').inc()
-            return jsonify(answer=answer)
+            
+            # Return the answer along with additional details
+            return jsonify(answer=answer, score=score, start=start, end=end)
 ```
 
 ### Error Handling
 Logging and error responses are managed to ensure service reliability.
 ```python
 except Exception as e:
-    logging.error(f"Error processing request: {e}")
     return {"error": str(e)}, 500
 ```
 
