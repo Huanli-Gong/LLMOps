@@ -2,7 +2,7 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "qa-api2-deployment"
+  name: "qa-api-deployment"
 spec:
   replicas: 3
   selector:
