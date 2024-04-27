@@ -54,10 +54,10 @@ curl -X POST http://localhost:8080/qa \
 {"error": "`question` cannot be empty"}
 ```
 
-![Function overview](screenshot/screenshot2.png)
+![Function overview](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG50.jpg)
 
 
-## Detailed Stpes
+## Detailed Steps
 ## Step 1: Install Dependencies
 
 Install the required Python packages:
@@ -102,6 +102,7 @@ correct_requests_counter = Counter(
     ['endpoint']
 )
 ```
+![3](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG120.jpg)
 
 ### QuestionAnswer Resource Class
 This class handles POST requests by performing model inference to answer questions, providing additional details about the answer.
@@ -238,7 +239,41 @@ gcloud container clusters get-credentials <cluster-name> --zone  <zone> --projec
 
 ### 7. Write the Kubernetes Configuration YAML File
 Create a YAML file (`kubernetes.yaml`) that describes your deployment and service. This file includes specifications for replicas, container images, ports, etc.
+```
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "qa-api-deployment"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "qa-api"
+  template:
+    metadata:
+      labels:
+        app: "qa-api"
+    spec:
+      containers:
+      - name: "qa-api"
+        image: "hathawayliu/qa-api:latest"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "metrics-server"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: qa-api
 
+```
 ### 8. Deploy Your Application
 Apply the YAML configuration to your cluster, deploying your application, replace <yaml-file> with your real yaml file
 ```bash
@@ -250,9 +285,13 @@ Check the status of your deployment:
 ```bash
 kubectl get deployments
 ```
+
+![1](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG37.jpg)
+
 Or you could go to Google Cloud to view the status of your deployment:
 ![deployment](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/7c02afa64ce22796c541b5b947dd92cf/Screenshot_2024-04-25_at_8.32.22_PM.png)
 
+![2](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG41.jpg)
 ### 10. Verify Service
 Check the created services to ensure your application is accessible:
 ```bash
@@ -263,3 +302,34 @@ kubectl get svc
 
 - Configure your CI/CD pipeline using your preferred CI/CD platform (e.g., GitLab CI).
 - Ensure your pipeline handles the lifecycle of building, testing, and deploying your application.
+- ```.gitlab-ci.yml```
+```
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+    - docker build -t hathawayliu/qa-api:latest .
+    - docker push hathawayliu/qa-api:latest
+
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  script:
+    - echo $GKE_SERVICE_KEY > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud container clusters get-credentials qa-api --zone us-west1 --project ids721
+    - kubectl apply -f kubernetes.yaml
+    - kubectl get deployments
+    - kubectl get pods -l app=qa-api
+    - kubectl get svc
+  only:
+    - main
+
+```
