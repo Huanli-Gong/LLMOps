@@ -258,7 +258,7 @@ spec:
     spec:
       containers:
       - name: "qa-api"
-        image: "hathawayliu/qa-api:latest"
+        image: "user_name/qa-api:latest"
         ports:
         - containerPort: 8080
 ---
@@ -290,7 +290,7 @@ kubectl get deployments
 ![1](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG37.jpg)
 
 Or you could go to Google Cloud to view the status of your deployment:
-![deployment](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/7c02afa64ce22796c541b5b947dd92cf/Screenshot_2024-04-25_at_8.32.22_PM.png)
+![deployment](uploads/97893ee93d77efee19923fc69b3aa871/deployment.png)
 
 ![2](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG41.jpg)
 ### 10. Verify Service
