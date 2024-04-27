@@ -12,7 +12,7 @@ The purpose of this project is to develop a robust, scalable web service that ut
 
 ## Demo Video
 
-![Demo Video](https://youtu.be/QNpc3XgGnjE)
+[![Demo Video]()](https://youtu.be/QNpc3XgGnjE)
 
 ## Introduction
 
