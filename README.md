@@ -336,4 +336,4 @@ deploy:
 ## Reference
 - [Rust-bert Documentation](https://docs.rs/rust-bert/latest/rust_bert/)
 - [How to Build and Deploy Docker Images on GKE](https://medium.com/hashmapinc/how-to-build-and-deploy-docker-images-on-gke-part-ii-f8466922f5f5)
-- [HuggingFace Rustformers](https://huggingface.co/rustformers)
+- [HuggingFace DistilBERT](https://huggingface.co/distilbert/distilbert-base-uncased-distilled-squad/tree/main)
