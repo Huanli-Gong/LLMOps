@@ -11,8 +11,8 @@
 The purpose of this project is to develop a robust, scalable web service that utilizes machine learning to provide answers to questions based on a provided context. This service leverages an open-source machine learning model for extractive question answering, specifically using the DistilBERT model pre-trained on the SQuAD dataset.
 
 ## Demo Video
-
-[![Demo Video]()](https://youtu.be/QNpc3XgGnjE)
+Click on below picture to play the video
+[![Demo Video](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/b6a2cfeab333d5fc8f4a971766952f80/Screenshot_2024-04-26_at_10.57.13_PM.png)](https://youtu.be/QNpc3XgGnjE)
 
 ## Introduction
 
