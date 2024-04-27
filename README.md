@@ -31,7 +31,7 @@ Clients can interact with the API by sending a POST request to `/qa` endpoint. T
 ```bash
 curl -X POST http://localhost:8080/qa \
 -H "Content-Type: application/json" \
--d '{"question": "What is your hometown?", "context": "My hometown is a beautiful city. Its name is Guangzhou, which is a beautiful place with lots of flowers"}'
+-d '{"question": "Where is your hometown?", "context": "My hometown is a beautiful city. Its name is Guangzhou, which is a beautiful place with lots of flowers"}'
 ```
 
 ##### Example Answer 1:
