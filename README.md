@@ -39,7 +39,7 @@ curl -X POST http://localhost:8080/qa \
 {"answer":"Guangzhou","end":54,"score":0.9698584079742432,"start":45}
 ```
 
-![Function overview](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/935e235f40e18d43a043ce81ffa6964f/Screenshot_2024-04-25_at_2.21.47_PM.png)
+![Function overview](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/d5661a4e840f9a33344bacf23c60c543/Screenshot_2024-04-26_at_9.11.58_PM.png)
 
 ##### Example Request 2 with Empty Input:
 
@@ -333,3 +333,7 @@ deploy:
     - main
 
 ```
+## Reference
+- [Rust-bert Documentation](https://docs.rs/rust-bert/latest/rust_bert/)
+- [How to Build and Deploy Docker Images on GKE](https://medium.com/hashmapinc/how-to-build-and-deploy-docker-images-on-gke-part-ii-f8466922f5f5)
+- [HuggingFace Rustformers](https://huggingface.co/rustformers)
