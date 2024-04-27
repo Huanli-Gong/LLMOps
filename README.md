@@ -188,7 +188,7 @@ CMD ["python", "./src/main.py"]
 Navigate to the directory containing your Dockerfile and build your Docker image:
 
 ```bash
-docker build -t user_name/qa-api:latest .
+docker buildx build --platform linux/amd64 -t user_name/qa-api:latest .
 ```
 
 ## Step 6: Push the Image to Docker Hub
