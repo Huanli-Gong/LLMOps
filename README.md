@@ -290,7 +290,7 @@ kubectl get deployments
 ![1](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG37.jpg)
 
 Or you could go to Google Cloud to view the status of your deployment:
-![deployment](uploads/97893ee93d77efee19923fc69b3aa871/deployment.png)
+![deployment](uploads/0aa33a547c8a1104579e9d06c0721357/deployment.png)
 
 ![2](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG41.jpg)
 ### 10. Verify Service
