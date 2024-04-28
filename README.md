@@ -291,7 +291,7 @@ kubectl get deployments
 
 Or you could go to Google Cloud to view the status of your deployment:
 ![deployment](uploads/0aa33a547c8a1104579e9d06c0721357/deployment.png)
-
+![deployment](https://gitlab.com/final-group-11/final-project-group-11/-/wikis/uploads/0aa33a547c8a1104579e9d06c0721357/deployment.png)
 ![2](https://raw.githubusercontent.com/LeoZhangzaolin/photos/main/WechatIMG41.jpg)
 ### 10. Verify Service
 Check the created services to ensure your application is accessible:
