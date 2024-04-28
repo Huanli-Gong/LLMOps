@@ -316,8 +316,8 @@ build:
     - docker:dind
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
-    - docker build -t hathawayliu/qa-api:latest .
-    - docker push hathawayliu/qa-api:latest
+    - docker build -t user_name/qa-api:latest .
+    - docker push user_name/qa-api:latest
 
 deploy:
   stage: deploy
@@ -325,10 +325,10 @@ deploy:
   script:
     - echo $GKE_SERVICE_KEY > gcloud-service-key.json
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
-    - gcloud container clusters get-credentials qa-api --zone us-west1 --project ids721
+    - gcloud container clusters get-credentials <cluster name> --zone <zone name> --project <project name>
     - kubectl apply -f kubernetes.yaml
     - kubectl get deployments
-    - kubectl get pods -l app=qa-api
+    - kubectl get pods -l app=<cluster name>
     - kubectl get svc
   only:
     - main
